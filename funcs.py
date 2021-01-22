@@ -1,19 +1,52 @@
 import numpy as np
 
 
-def process_const(str_, const_names):
-    coefficient_lst = np.zeros(len(const_names))
-    lhs = str_.split(' <= ')[0]
-    lhs_lst = lhs.split(' ')
+def optimality_check(array_):
+    """
+    Deltas are checked, if all are nonnegative, then the basis solution is optimal.
+    """
+    if min(array_)>0:
+        return True
+    else:
+        return False
 
-    for el in lhs_lst:
-        if "*" in el:
-            var_name = el[el.find('*')+1:]
-            var_idx = const_names.index(var_name)
-            coefficient_lst[var_idx] = int(el[:el.find('*')])
-    return coefficient_lst
+
+def find_nonbasis_vector(basis_vector, number_of_vars):
+    """
+    Just for initialization process, returns non-basis vector.
+    :param basis_vector:
+    :param number_of_vars:
+    :return:
+    """
+    return [x for x in range(number_of_vars) if x not in basis_vector]
+
+
+def find_entering_vector(delta_vector, nonbasis_vector):
+    return np.argmin(delta_vector), nonbasis_vector[np.argmin(delta_vector)]
+
+
+def find_leaving_vector(rhs, entering_vector, basis_vector):
+    """
+    Performs minimum-ratio test to find leaving variable from basis_vector.
+    Not considers results with 0, and infinite value
+    """
+    basis_vector = np.array(basis_vector)
+    if np.min(rhs) == 0: #discards 0/number results
+        leaving_idx = np.argmin(rhs)
+        rhs = np.delete(rhs, leaving_idx)
+        entering_vector = np.delete(entering_vector, leaving_idx)
+        basis_vector = np.delete(basis_vector, leaving_idx)
+
+    if np.min(entering_vector)==0: #discards number/0 results
+        leaving_idx = np.argmin(entering_vector)
+        rhs.pop(leaving_idx)
+        entering_vector.pop(leaving_idx)
+        basis_vector.pop(leaving_idx)
+    return np.argmin(rhs/entering_vector), basis_vector[np.argmin(rhs/entering_vector)]
+
 
 if __name__ == "__main__":
-    a = "1*a +3*b -1*c <= 10"
-    print(process_const(a, ['a', 'b', 'c']))
+    t = find_nonbasis_vector([3,4,5], 6)
+    print(t)
+
 
