@@ -5,7 +5,7 @@ def optimality_check(array_):
     """
     Deltas are checked, if all are nonnegative, then the basis solution is optimal.
     """
-    if min(array_)>0:
+    if min(array_)>=0:
         return True
     else:
         return False
@@ -31,18 +31,38 @@ def find_leaving_vector(rhs, entering_vector, basis_vector):
     Not considers results with 0, and infinite value
     """
     basis_vector = np.array(basis_vector)
-    if np.min(rhs) == 0: #discards 0/number results
-        leaving_idx = np.argmin(rhs)
-        rhs = np.delete(rhs, leaving_idx)
-        entering_vector = np.delete(entering_vector, leaving_idx)
-        basis_vector = np.delete(basis_vector, leaving_idx)
+    minimum_idx = 0
+    min_value = 500
+    for idx in range(len(entering_vector)):
+        if rhs[idx] == 0:
+            pass
+        elif entering_vector[idx]==0:
+            pass
+        else:
+            new_value = rhs[idx]/entering_vector[idx]
+            if new_value<=min_value:
+                min_value = new_value
+                minimum_idx = idx
+    return minimum_idx
 
-    if np.min(entering_vector)==0: #discards number/0 results
-        leaving_idx = np.argmin(entering_vector)
-        rhs.pop(leaving_idx)
-        entering_vector.pop(leaving_idx)
-        basis_vector.pop(leaving_idx)
-    return np.argmin(rhs/entering_vector), basis_vector[np.argmin(rhs/entering_vector)]
+def update_matrix(matrix, vector_ele, idx):
+    """
+    matrix
+    """
+    total_operation = matrix.shape[0]
+
+    matrix[idx, :] = matrix[idx, :]/vector_ele[idx]
+    for i in range(total_operation):
+        if i == idx:
+            pass
+        else:
+            matrix[i] = matrix[i]-1*vector_ele[i]*matrix[idx]
+    new_col_for_additionaltable = np.zeros(len(vector_ele))
+    new_col_for_additionaltable[idx] = 1
+    return matrix, new_col_for_additionaltable
+
+
+
 
 
 if __name__ == "__main__":

@@ -1,5 +1,6 @@
 import numpy as np
 from funcs import *
+from Info_Extractor import *
 
 """
 GUI'de objective function kısmına yazılan
@@ -27,18 +28,25 @@ x3>=0
 
     #iteration 0:
 
-
+"""
 constmatrix =np.array(
 [[1, -1, -2, 0, 0, 0],
  [0, 1, 1, 1, 0, 0],
  [0, 1, 2, 0, 1, 0],
- [0, 3, 1, 0, 0 ,1]])
+ [0, 3, 1, 0, 0 ,1]], dtype=float)
 
 
 
 var_vector = np.array(['z', 'x1', 'x2', 'x3', 'x4', 'x5'])
 rhs = np.array([0, 3, 5, 6])
-slack_vars_positions = [3,4,5]
+slack_vars_positions = [3,4,5]"""
+
+constmatrix, var_vector, rhs, slack_nums = process_input_for_optimization()
+constmatrix = np.array(constmatrix)
+rhs = np.array(rhs, dtype=float)
+rhs = np.insert(rhs, 0, [0], axis=0 )
+
+slack_vars_positions = list(range(len(var_vector)-slack_nums+1, len(var_vector)+1))
 
 
 #initialization
@@ -55,34 +63,35 @@ optimality_condition=False
 iteration_number = 0
 while True:
     print(f"Iteration {iteration_number}:")
-    delta_vector = np.dot(basis_matrix[0, :], additional_table)
+    if iteration_number == 0:
+        delta_vector = np.dot(basis_matrix[0, :], additional_table)
+    else:
+        first_el_for_dot = basis_matrix[0, :]
+        first_el_for_dot = np.insert(first_el_for_dot, 0, [1], axis=0)
+        delta_vector = np.dot(first_el_for_dot, additional_table)
+
     optimality_condition = optimality_check(delta_vector)
 
     if optimality_condition:
-        print("Optimal solution is found")
+        print("\tOptimal solution is found")
+        print("o")
+        print()
         break
     entering_basis_idx, entering_basis = find_entering_vector(delta_vector, nonbasis_var_vector)
     print(f"\tVariable {entering_basis} enters the basis")
 
     entering_vector = additional_table[:,entering_basis_idx]
-    leaving_basis_idx, leaving_basis = find_leaving_vector(rhs, entering_vector, basis_var_vector)
-    print(f"\tVariable {leaving_basis} leaves the basis")
+    leaving_basis_idx= find_leaving_vector(rhs, entering_vector, basis_var_vector)
+    leaving_basis = basis_var_vector[leaving_basis_idx]
+    print(f"\tVariable {basis_var_vector[leaving_basis_idx]} leaves the basis")
 
-    #update basis, non-basis vectors
+    #### UPDATE OPERATIONS ####
+    basis_matrix_b = basis_matrix_b[:, 1:]
+    basis_matrix_b, entering_col_addittab = update_matrix(basis_matrix_b, entering_vector, leaving_basis_idx) #update new B^-1
 
-    basis_var_vector[basis_var_vector.index(leaving_basis)] = entering_basis
-    nonbasis_var_vector[nonbasis_var_vector.index(entering_basis)] = leaving_basis
-
-    intermediate_coef_matrix = basis_matrix_b
-
-    print('a')
-
-
-
-    #entering vector
-
-
-basis_vector = [0, 3,4,5] #variable position index
-nonbasis_vector = [1,2]
-
-
+    basis_var_vector[leaving_basis_idx] = entering_basis #update basis_variables
+    nonbasis_var_vector[entering_basis_idx] = leaving_basis #update non-basis variables
+    rhs = basis_matrix_b[:, -1:] #update righthandside
+    basis_matrix= basis_matrix_b[:, :-1] #insert updated B^-1
+    additional_table[:,entering_basis_idx] = entering_col_addittab
+    iteration_number += 1
