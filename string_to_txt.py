@@ -11,9 +11,9 @@ def objective_to_txt(string):
 
 def constraints_to_txt(string):
 
-    valTxt = open("values.txt", "w+")
-    resultTxt = open("result.txt", "w+")
-    variableTxt = open("constraint_variables.txt", "w+")
+    valTxt = open("3.values.txt", "w+")
+    resultTxt = open("2.result.txt", "w+")
+    variableTxt = open("1.constraint_variables.txt", "w+")
 
     equations = string.split("_")
 
@@ -92,7 +92,7 @@ def constraints_to_txt(string):
 
 def variablestr_to_txt(string):
 
-    myTxt = open("variables.txt", "w+")
+    myTxt = open("6.variables.txt", "w+")
 
     myTxt.write(string)
 
@@ -100,13 +100,45 @@ def variablestr_to_txt(string):
 
 def objectivestr_to_txt(string):
 
-    myTxt = open("objectivestr.txt", "w+")
+    objval = open("5.objective_values.txt", "w+")
+    objvar = open("4.objective_variables.txt", "w+")
 
-    myTxt.write(string)
+    equations = string.split("_")
 
-    myTxt.close()
+    for equation in equations:
+
+        element = equation.split("*")
+
+        valstr = ""
+        variablestr =""
+
+        for val in element:
+
+            if val.find("x") !=-1 and element.index(val) != len(element)-1:
+
+                num = int(val[2:])
+
+                valstr = valstr + " " + str(num)
+
+                variablestr = variablestr + " " + val[:2]
+
+            elif element.index(val) != len(element)-1:
+                num = int(val)
+
+                valstr = valstr + " " + str(num)
+
+            else:
+                variablestr = variablestr + " " + val
+
+        objval.write(valstr)
+        objval.write("\n")
+
+        objvar.write(variablestr)
+        objvar.write("\n")
+
+    objval.close()
+    objvar.close()
 
 
-#string = "1*x1+3*x2<=10_-1*x2+2*x3<=5"
-
-#constraints_to_txt(string)
+#string = "-1*x1+3*x3"
+#objectivestr_to_txt(string)

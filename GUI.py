@@ -8,7 +8,6 @@ def click():
     entered_variables = L5Entry.get()
     entered_constraints = L7Entry.get()
 
-
     string_to_txt.objective_to_txt(entered_objective)
     string_to_txt.objectivestr_to_txt(entered_objective_string)
     string_to_txt.variablestr_to_txt(entered_variables)
@@ -17,7 +16,6 @@ def click():
 window = tk.Tk()
 window.title("Revised Simplex Method")
 window.configure(background="white")
-
 
 window.geometry("500x300")
 L0 = Label(window, text="", bg="white").grid(row=0, column=0, sticky=W)
@@ -28,7 +26,7 @@ L1Entry.grid(row=1, column=2, sticky=W)
 
 L2 = Label(window, text="", bg="white").grid(row=2, column=0, sticky=W)
 
-L3 = Label(window, text="Objective string:\n(ex: 2*x1-3*x2+5*x3<=7)", bg="white").grid(row=3, column=0, sticky=W)
+L3 = Label(window, text="Objective string:\n(ex: 2*x1-3*x2+5*x3)", bg="white").grid(row=3, column=0, sticky=W)
 L3Entry = Entry (window, width=20, bg="white")
 L3Entry.grid(row=3, column=2, sticky=W)
 
