@@ -1,6 +1,6 @@
 def objective_to_txt(string):
 
-    myTxt = open("Objective.txt", "w+")
+    myTxt = open("objective.txt", "w+")
 
     for i in range(1):
 
@@ -93,6 +93,14 @@ def constraints_to_txt(string):
 def variablestr_to_txt(string):
 
     myTxt = open("variables.txt", "w+")
+
+    myTxt.write(string)
+
+    myTxt.close()
+
+def objectivestr_to_txt(string):
+
+    myTxt = open("objectivestr.txt", "w+")
 
     myTxt.write(string)
 
