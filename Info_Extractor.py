@@ -108,6 +108,7 @@ def process_input_for_optimization():
     arr = np.insert(arr, 0, obj_varlist, axis=0)
     col_vec = [0] * (num_of_slack + 1)
     col_vec[0] = 1
+    arr[0] = -1* arr[0]
     arr = np.insert(arr, 0, col_vec, axis=1)
 
     len_varlist = len(varlist)
