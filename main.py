@@ -43,6 +43,7 @@ slack_vars_positions = [3,4,5]"""
 
 constmatrix, var_vector, rhs, slack_nums = process_input_for_optimization()
 constmatrix = np.array(constmatrix)
+
 rhs = np.array(rhs, dtype=float)
 rhs = np.insert(rhs, 0, [0], axis=0 )
 
@@ -74,8 +75,9 @@ while True:
 
     if optimality_condition:
         print("\tOptimal solution is found")
-        print("o")
-        print()
+        print("Optimal solution is: %s"%(rhs[0]))
+        print("Variables in the basis:")
+        #TODO: implementation to show final basis variables
         break
     entering_basis_idx, entering_basis = find_entering_vector(delta_vector, nonbasis_var_vector)
     print(f"\tVariable {entering_basis} enters the basis")
