@@ -4,7 +4,7 @@ def save_as_JSON(obj, var_list, obj_equ, const):
 
     dict = {}
 
-    dict["objcetive"] = obj
+    dict["objective"] = obj
     dict["variable_list"] = var_extractor(var_list)
     dict["objective_equation"] = extractor(obj_equ, False)
     dict["constraints"] = extractor(const)
