@@ -8,10 +8,7 @@ def click():
     entered_variables = L5Entry.get()
     entered_constraints = L7Entry.get()
 
-    string_to_txt.objective_to_txt(entered_objective)
-    string_to_txt.objectivestr_to_txt(entered_objective_string)
-    string_to_txt.variablestr_to_txt(entered_variables)
-    string_to_txt.constraints_to_txt(entered_constraints)
+    string_to_txt.save_as_JSON(entered_objective, entered_variables, entered_objective_string, entered_constraints)
 
 window = tk.Tk()
 window.title("Revised Simplex Method")

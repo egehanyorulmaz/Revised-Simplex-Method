@@ -1,144 +1,148 @@
-def objective_to_txt(string):
+import json as js
 
-    myTxt = open("objective.txt", "w+")
+def save_as_JSON(obj, var_list, obj_equ, const):
 
-    for i in range(1):
+    dict = {}
 
-        myTxt.write(string)
+    dict["objcetive"] = obj
+    dict["variable_list"] = var_extractor(var_list)
+    dict["objective_equation"] = extractor(obj_equ, False)
+    dict["constraints"] = extractor(const)
 
+    with open('Extraction.json', 'w') as fp:
+        js.dump(dict, fp, indent=4)
 
-    myTxt.close()
+def var_extractor(text):
 
-def constraints_to_txt(string):
+    var_vector = []
 
-    valTxt = open("3.values.txt", "w+")
-    resultTxt = open("2.result.txt", "w+")
-    variableTxt = open("1.constraint_variables.txt", "w+")
+    elements = text.split(" ")
 
-    equations = string.split("_")
+    for element in elements:
 
-    idenList = ["<=", ">=", "<", ">"]
+        var_vector.append(element)
 
-    identifierList = []
+    return var_vector
 
-    for equ in equations:
+def extractor(text, flag = True):
 
-        identifier = ""
+    equdict = {}
 
-        for i in idenList:
+    if "_" in text:
 
-            found = equ.find(i)
+        equations = text.split("_")
 
-            if found != -1:
+        for counter, equation in enumerate(equations):
 
-                identifierList.append(i)
+            nodedict = {}
 
-                break
+            vals, xs, signs, rhs = string_manupulator(equation)
 
-    idencounter=0
+            nodedict["values"] = vals
+            nodedict["xs"] = xs
+            nodedict["notation"] = signs
+            nodedict["rhs"] = rhs
 
-    for equation in equations:
+            equdict["Constraint_{}".format(counter)] = nodedict
 
-        counter = 0
+    elif flag == False:
 
-        sides = equation.split(identifierList[idencounter])
+        vals, xs, signs, rhs= string_manupulator(text + "<0")
 
-        for side in sides:
+        equdict["values"] = vals
+        equdict["xs"] = xs
 
-            if counter == 0:
+    else:
 
-                element = side.split("*")
+        vals, xs, signs, rhs= string_manupulator(text)
 
-                valstr = ""
-                variablestr =""
+        equdict["values"] = vals
+        equdict["xs"] = xs
+        equdict["notation"] = signs
+        equdict["rhs"] = rhs
 
-                for val in element:
+    return equdict
 
-                    if val.find("x") !=-1 and element.index(val) != len(element)-1:
+def string_manupulator(equation):
 
-                        num = int(val[2:])
+    comparisons = ["<", ">"]
 
-                        valstr = valstr + " " + str(num)
+    signs = []
 
-                        variablestr = variablestr + " " + val[:2]
+    if " " in equation:
 
-                    elif element.index(val) != len(element)-1:
-                        num = int(val)
+        equation = equation.replace(" ", "")
 
-                        valstr = valstr + " " + str(num)
+    symbol = ""
 
-                    else:
-                        variablestr = variablestr + " " + val
+    for symbols in comparisons:
 
-                valTxt.write(valstr)
-                valTxt.write("\n")
+        if symbols in equation:
 
-                variableTxt.write(variablestr)
-                variableTxt.write("\n")
+            indx = equation.index(symbols)
 
-            else:
+            symbol = equation[indx]
 
-                resultTxt.write(side + " " + identifierList[idencounter])
-                resultTxt.write("\n")
+            if equation[indx+1] == "=":
 
-            counter += 1
+                symbol = symbol + "="
 
-        idencounter += 1
+    signs.append(symbol)
 
-    valTxt.close()
+    equation = equation.replace(symbol, "!")
 
-    resultTxt.close()
+    sides = equation.split("!")
 
+    countedx = sides[0].count("x")
 
-def variablestr_to_txt(string):
+    for times in range(countedx-1):
 
-    myTxt = open("6.variables.txt", "w+")
+        if "+" in sides[0][1:]:
 
-    myTxt.write(string)
+            indx = sides[0].index("+", sides[0].index("x"))
 
-    myTxt.close()
+            sides[0] = sides[0][:indx] + "!" + sides[0][indx+1:]
 
-def objectivestr_to_txt(string):
+        elif "-" in sides[0][1:]:
 
-    objval = open("5.objective_values.txt", "w+")
-    objvar = open("4.objective_variables.txt", "w+")
+            indx = sides[0].index("-", sides[0].index("x"))
 
-    equations = string.split("_")
+            sides[0] = sides[0][:indx] + "!-" + sides[0][indx+1:]
 
-    for equation in equations:
+    elements = sides[0].split("!")
 
-        element = equation.split("*")
+    values = []
 
-        valstr = ""
-        variablestr =""
+    xs = []
 
-        for val in element:
+    for element in elements:
 
-            if val.find("x") !=-1 and element.index(val) != len(element)-1:
+        if "*" in element:
 
-                num = int(val[2:])
+            indx = element.index("*")
 
-                valstr = valstr + " " + str(num)
+            values.append(int(element[:indx]))
 
-                variablestr = variablestr + " " + val[:2]
+            xs.append(element[indx+1:])
 
-            elif element.index(val) != len(element)-1:
-                num = int(val)
+        elif element.index("x") != 0:
 
-                valstr = valstr + " " + str(num)
+            indx = element.index("x")
 
-            else:
-                variablestr = variablestr + " " + val
+            values.append(int(element[:indx]))
 
-        objval.write(valstr)
-        objval.write("\n")
+            xs.append(element[indx:])
 
-        objvar.write(variablestr)
-        objvar.write("\n")
+        else:
 
-    objval.close()
-    objvar.close()
+            values.append(1)
 
+            xs.append(element[:])
 
-#string = "-1*x1+3*x3"
-#objectivestr_to_txt(string)
+    return values, xs, signs, int(sides[1])
+
+if __name__ == "__main__":
+
+    val = "x1+x2-4*x3<=10_-1*x2+2*x3>5"
+
+    save_as_JSON("max", "x1 x2 x3 x4", "2*x1-3*x2+5*x3", val)
