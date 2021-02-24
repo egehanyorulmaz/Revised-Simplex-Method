@@ -1,5 +1,7 @@
 import numpy as np
 from funcs import *
+from Optimizing import main_func
+import json as js
 """
 GUI'de objective function kısmına yazılan
 objective : max or min
@@ -16,6 +18,7 @@ x2>=0
 x3>=0
 """
 
+
     #text processing (constraint_matrix (number_of_constraint, number_of_variables)
     #objective function control ( min -> max ) [1, 2, 3] -> *-1 -> [-1, -2, -3]
     #constraint control ( >= -> <=) for all constraints > *-1 > updated_constraint_matrix
@@ -26,7 +29,7 @@ x3>=0
 
     #iteration 0:
 
-
+"""
 #TODO: this values will be transferred from GUI as input
 constmatrix =np.array(
 [[1, -1, -2, 0, 0, 0],
@@ -37,6 +40,12 @@ constmatrix =np.array(
 var_vector = np.array(['z', 'x1', 'x2', 'x3', 'x4', 'x5'])
 rhs = np.array([0, 3, 5, 6])
 slack_vars_positions = [3,4,5]
+
+"""
+
+json = open("Extraction.json")
+data = js.load(json)
+constmatrix, var_vector, rhs, slack_vars_positions = main_func(data)
 var_positions = np.delete(np.arange(len(var_vector)), slack_vars_positions + [0])
 
 

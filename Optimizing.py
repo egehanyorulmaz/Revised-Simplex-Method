@@ -137,7 +137,7 @@ def matrix_treatment(dict_):
 
     nplist = [a for a in matrix_dict.values()]
 
-    return np.array(nplist)
+    return np.array(nplist).astype(float)
 
 def var_sl_vec(dict_):
 
@@ -158,7 +158,7 @@ def var_sl_vec(dict_):
 
         sl_vec.append(i)
 
-    return np.array(var_vec), np.array(sl_vec)
+    return np.array(var_vec), sl_vec
 
 def rhs_vec (dict_):
 
@@ -171,7 +171,7 @@ def rhs_vec (dict_):
 
         rhs.append(path)
 
-    return rhs
+    return np.array(rhs)
 
 def main_func (dict_):
 
