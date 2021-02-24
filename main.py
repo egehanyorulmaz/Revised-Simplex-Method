@@ -1,7 +1,5 @@
 import numpy as np
 from funcs import *
-from Info_Extractor import *
-
 """
 GUI'de objective function kısmına yazılan
 objective : max or min
@@ -28,26 +26,18 @@ x3>=0
 
     #iteration 0:
 
-"""
+
+#TODO: this values will be transferred from GUI as input
 constmatrix =np.array(
 [[1, -1, -2, 0, 0, 0],
  [0, 1, 1, 1, 0, 0],
  [0, 1, 2, 0, 1, 0],
  [0, 3, 1, 0, 0 ,1]], dtype=float)
 
-
-
 var_vector = np.array(['z', 'x1', 'x2', 'x3', 'x4', 'x5'])
 rhs = np.array([0, 3, 5, 6])
-slack_vars_positions = [3,4,5]"""
-
-constmatrix, var_vector, rhs, slack_nums = process_input_for_optimization()
-constmatrix = np.array(constmatrix)
-
-rhs = np.array(rhs, dtype=float)
-rhs = np.insert(rhs, 0, [0], axis=0 )
-
-slack_vars_positions = list(range(len(var_vector)-slack_nums+1, len(var_vector)+1))
+slack_vars_positions = [3,4,5]
+var_positions = np.delete(np.arange(len(var_vector)), slack_vars_positions + [0])
 
 
 #initialization
@@ -75,11 +65,18 @@ while True:
 
     if optimality_condition:
         print("\tOptimal solution is found")
-        print("Optimal solution is: %s"%(rhs[0]))
+        print("Optimal solution is: %s"%(rhs[0][0]))
         print("Variables in the basis:")
-        #TODO: implementation to show final basis variables
+        for i in var_positions:
+            if i in basis_var_vector:
+                print(f'{var_vector[i]} is: {rhs[i][0]}')
+            else:
+                print(f'{var_vector[i]} is: 0')
+
+
         break
-    entering_basis_idx, entering_basis = find_entering_vector(delta_vector, nonbasis_var_vector)
+
+    entering_basis_idx, entering_basis = find_entering_vector(delta_vector, nonbasis_var_vector) # minimum value is extract as entering basis variable
     print(f"\tVariable {entering_basis} enters the basis")
 
     entering_vector = additional_table[:,entering_basis_idx]
