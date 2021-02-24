@@ -47,7 +47,7 @@ def find_leaving_vector(rhs, entering_vector, basis_vector):
 
 def update_matrix(matrix, vector_ele, idx):
     """
-    matrix
+    Performs elementary row operations to make pivot element as 1, others as 0
     """
     total_operation = matrix.shape[0]
 
