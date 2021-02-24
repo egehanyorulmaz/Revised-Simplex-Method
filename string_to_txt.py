@@ -143,6 +143,6 @@ def string_manupulator(equation):
 
 if __name__ == "__main__":
 
-    val = "x1+x2-4*x3<=10_-1*x2+2*x3>5"
+    val = "x10+x20-4x30<=10_-1*x2+2*x3>=5"
 
     save_as_JSON("max", "x1 x2 x3 x4", "2*x1-3*x2+5*x3", val)
